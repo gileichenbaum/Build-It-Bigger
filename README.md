@@ -1,3 +1,6 @@
+[![Book session on Codementor](https://cdn.codementor.io/badges/book_session_github.svg)](https://www.codementor.io/gileichenbaum?utm_source=github&utm_medium=button&utm_term=gileichenbaum&utm_campaign=github)
+
+
 # Gradle for Android and Java Final Project
 
 In this project, you will create an app with multiple flavors that uses
