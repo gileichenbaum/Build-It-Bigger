@@ -12,6 +12,11 @@ buildscript {
     }
 }
 
+tasks {
+    task("appengineRun")
+    task("appengineStop")
+}
+
 allprojects {
     repositories {
         jcenter()

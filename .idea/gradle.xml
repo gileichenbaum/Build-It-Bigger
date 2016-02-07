@@ -13,6 +13,17 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/backend" />
             <option value="$PROJECT_DIR$/jokeapi" />
+            <option value="$PROJECT_DIR$/paidapp" />
+          </set>
+        </option>
+        <option name="myModules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/androidjokes" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/backend" />
+            <option value="$PROJECT_DIR$/jokeapi" />
+            <option value="$PROJECT_DIR$/paidapp" />
           </set>
         </option>
       </GradleProjectSettings>

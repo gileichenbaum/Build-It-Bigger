@@ -1,7 +1,7 @@
 package com.tt.androidjokes;
 
 import android.os.AsyncTask;
-import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.gil.myapplication.backend.jokeApi.JokeApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class JokeAsyncTask extends AsyncTask<JokeCallback, Void, String> {
 
+    private static final String TAG = JokeAsyncTask.class.getSimpleName();
     private static JokeApi mApiService = null;
     private JokeCallback mListener;
 
@@ -27,7 +28,7 @@ public class JokeAsyncTask extends AsyncTask<JokeCallback, Void, String> {
                     // options for running against local devappserver
                     // - 10.0.2.2 is localhost's IP address in Android emulator
                     // - turn off compression when running against local devappserver
-                    .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                    .setRootUrl("https://aitype-cloud-server.appspot.com/_ah/api/")
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
                         public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -44,16 +45,14 @@ public class JokeAsyncTask extends AsyncTask<JokeCallback, Void, String> {
         try {
             return mApiService.getJoke().execute().getData();
         } catch (IOException e) {
+            mListener.onError(e);
+            Log.e(TAG, "error getting joke from server", e);
             return null;
         }
     }
 
     @Override
     protected void onPostExecute(String joke) {
-        if (TextUtils.isEmpty(joke)) {
-            mListener.onError();
-        } else {
-            mListener.onJokeReady(joke);
-        }
+        mListener.onJokeReady(joke);
     }
 }

@@ -1,69 +1,115 @@
 package com.udacity.gradle.builditbigger;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.tt.androidjokes.JokeCallback;
-import com.tt.androidjokes.JokeFetcher;
-import com.tt.androidjokes.ShowJokeActivity;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.tt.androidjokes.MainActivityBase;
 
 
-public class MainActivity extends AppCompatActivity implements JokeCallback {
+public class MainActivity extends MainActivityBase {
+
+    private final static String TAG = "Free_MainActivity";
+
+    private InterstitialAd mInterstitialAd;
+    private String mJoke;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initBannerAd();
+        makeInterstitialAd();
     }
 
+    private void initBannerAd() {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        final AdView adView = (AdView) findViewById(R.id.adView);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                Log.i(TAG, "onAdClosed");
+            }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+            @Override
+            public void onAdFailedToLoad(final int errorCode) {
+                super.onAdFailedToLoad(errorCode);
+                Log.e(TAG, "onAdFailedToLoad, code=" + errorCode);
+            }
 
-        return super.onOptionsItemSelected(item);
-    }
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+                Log.i(TAG, "onAdLeftApplication");
+            }
 
-    public void tellJoke(View view) {
-        JokeFetcher.getJokeAsync(this);
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                Log.i(TAG, "onAdOpened");
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.i(TAG, "onAdLoaded");
+            }
+        });
+
+        final AdRequest adRequest = new AdRequest.Builder()
+                .setRequestAgent("android_studio:ad_template")
+                .build();
+
+        adView.loadAd(adRequest);
     }
 
     @Override
     public void onJokeReady(final String joke) {
-        if (TextUtils.isEmpty(joke)) {
-            onError();
+        mJoke = joke;
+        showJoke();
+    }
+
+    private void showJoke() {
+        if (TextUtils.isEmpty(mJoke)) {
+            super.onJokeReady(mJoke);
         } else {
-            final Intent intent = new Intent();
-            intent.setClass(this, ShowJokeActivity.class);
-            intent.putExtra(ShowJokeActivity.JOKE, joke);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                openJokeActivity(mJoke);
+                makeInterstitialAd();
+            }
         }
     }
 
-    @Override
-    public void onError() {
-        Toast.makeText(this, R.string.empy_joke_error, Toast.LENGTH_LONG).show();
+    private void makeInterstitialAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.i(TAG, "Onloaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.i(TAG, "onAdFailedToLoad " + errorCode);
+            }
+
+            @Override
+            public void onAdClosed() {
+                openJokeActivity(mJoke);
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder().setRequestAgent("android_studio:ad_template").build();
+        mInterstitialAd.loadAd(adRequest);
     }
 }

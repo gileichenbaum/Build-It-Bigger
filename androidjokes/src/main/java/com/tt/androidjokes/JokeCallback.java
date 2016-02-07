@@ -6,5 +6,5 @@ package com.tt.androidjokes;
 public interface JokeCallback {
     void onJokeReady(String joke);
 
-    void onError();
+    void onError(final Exception e);
 }
