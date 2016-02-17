@@ -1,11 +1,8 @@
-package com.tt.androidjokes;
+package com.udacity.gradle.builditbigger;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.text.TextUtils;
-
-import com.udacity.gradle.builditbigger.JokeAsyncTask;
-import com.udacity.gradle.builditbigger.JokeCallback;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -32,8 +29,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         signal.countDown();
     }
 
-    public void testGetJokeTask() throws InterruptedException {
-
+    public void testTestGetJokeTask() throws Exception {
         JokeAsyncTask task = new JokeAsyncTask();
         task.execute(new JokeCallback() {
             @Override
