@@ -12,9 +12,12 @@ buildscript {
     }
 }
 
-tasks {
-    task("appengineRun")
-    task("appengineStop")
+task serverTest {
+    dependsOn ':backend:appengineRun'
+    dependsOn ':app:deviceAndroidTest'
+    dependsOn ':backend:appengineStop'
+    tasks.findByName(':backend:appengineStop').mustRunAfter ':app:deviceAndroidTest'
+    tasks.findByName(':app:deviceAndroidTest').mustRunAfter ':backend:appengineRun'
 }
 
 allprojects {
